@@ -4,8 +4,15 @@ import Navbar from "../components/Navbar";
 
 import movies from "../dummy/movies.json";
 
-export class Detail extends Component {
-  movie = movies.find((movie) => movie.id == 634649);
+interface MovieState {
+  data?: [];
+}
+
+export class Detail extends Component<MovieState> {
+  state = {
+    data: [],
+  };
+
   render() {
     return (
       <>
