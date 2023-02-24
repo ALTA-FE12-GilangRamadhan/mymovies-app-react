@@ -7,19 +7,24 @@ import movies from "../dummy/movies.json";
 
 interface MoviesState {
   data?: [];
+  page: number;
+  total_pages: number;
 }
 
 export class Homepage extends Component<MoviesState> {
   state = {
     data: [],
+    page: 1,
+    total_pages: 0,
   };
 
-  async getMovies() {
+  async getMovies(page: number) {
     axios
-      .get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${import.meta.env.VITE_API_KEY}&language=en-US&page=1`)
+      .get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${import.meta.env.VITE_API_KEY}&language=en-US&page=${page}`)
       .then((response) => {
         console.log("data: ", response.data.results);
         this.setState({ data: response.data.results });
+        this.setState({ total_pages: response.data.total_pages });
       })
       .catch((error) => {
         console.log("error: ", error);
@@ -27,7 +32,17 @@ export class Homepage extends Component<MoviesState> {
   }
 
   componentDidMount() {
-    this.getMovies();
+    this.getMovies(1);
+  }
+
+  nextPage() {
+    this.setState({ page: this.state.page + 1 });
+    this.getMovies(this.state.page);
+  }
+
+  previousPage() {
+    this.setState({ page: this.state.page - 1 });
+    this.getMovies(this.state.page);
   }
 
   render() {
@@ -42,6 +57,15 @@ export class Homepage extends Component<MoviesState> {
             {data.map((item: any, index) => {
               return <Card key={index} id={item.id} title={item.original_title} image={item.poster_path} />;
             })}
+          </div>
+          <div className="btn-group flex justify-center py-5">
+            <button disabled={this.state.page <= 1} className="btn" onClick={() => this.previousPage()}>
+              «
+            </button>
+            <button className="btn">Page {this.state.page}</button>
+            <button disabled={this.state.page === this.state.total_pages} className="btn" onClick={() => this.nextPage()}>
+              »
+            </button>
           </div>
         </>
       </div>

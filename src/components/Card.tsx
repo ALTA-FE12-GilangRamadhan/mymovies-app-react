@@ -1,12 +1,21 @@
 import React, { Component } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { withRouter } from "../utils/navigation";
 
 interface Movies {
   id: string;
   title: string;
   image: string;
+  navigate?: any;
+  params?: any;
 }
 
-export class Card extends Component<Movies> {
+class Card extends Component<Movies> {
+  onClickDetail() {
+    this.props.navigate(`/movie/${this.props.id}`);
+  }
+
   render() {
     const { id, title, image } = this.props;
     return (
@@ -15,7 +24,9 @@ export class Card extends Component<Movies> {
           <img src={`https://image.tmdb.org/t/p/w500${image}`} alt={title} />
         </figure>
         <div className="card-body">
-          <h2 className="card-title">{title}</h2>
+          <h2 className="card-title" onClick={() => this.onClickDetail()}>
+            {title}
+          </h2>
           <div className="card-actions justify-center">
             <button className="btn btn-primary">Add to favorite</button>
           </div>
@@ -25,4 +36,4 @@ export class Card extends Component<Movies> {
   }
 }
 
-export default Card;
+export default withRouter(Card);
